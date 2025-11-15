@@ -20,7 +20,7 @@ df = pd.DataFrame({
 # 2. Inicializar la app
 # =========================
 app = dash.Dash(__name__)
-server = app.server  # útil para algunos hostings, no estorba en Render
+server = app.server  # por si algún hosting lo necesita
 
 # =========================
 # 3. Layout (interfaz)
@@ -41,7 +41,7 @@ app.layout = html.Div(
                 {"label": "sin(x)", "value": "sin(x)"},
                 {"label": "cos(x)", "value": "cos(x)"},
             ],
-            value="sin(x)",      # valor inicial
+            value="sin(x)",
             clearable=False,
             style={"width": "50%"}
         ),
@@ -72,9 +72,8 @@ def actualizar_grafica(nombre_funcion):
     return fig
 
 # =========================
-# 5. RUN para Render
+# 5. RUN para Render (Dash 3+)
 # =========================
 if __name__ == "__main__":
-    # Render asigna el puerto en la variable de entorno PORT
     port = int(os.environ.get("PORT", 8050))
-    app.run_server(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port)
