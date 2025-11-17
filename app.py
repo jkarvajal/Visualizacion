@@ -1,79 +1,74 @@
-import os
-import numpy as np
 import pandas as pd
 import plotly.express as px
-import dash
-from dash import dcc, html
-from dash.dependencies import Input, Output
+from dash import Dash, dcc, html
+import os
 
-# =========================
-# 1. Datos de ejemplo
-# =========================
-x = np.linspace(0, 10, 200)
-df = pd.DataFrame({
-    "x": x,
-    "sin(x)": np.sin(x),
-    "cos(x)": np.cos(x),
+# --------------------------------------------------------
+# Cargar datos
+# --------------------------------------------------------
+df = pd.read_csv("data/Student Mental health.csv")
+
+df = df.rename(columns={
+    'Choose your gender': 'gender',
+    'Age': 'age',
+    'What is your course?': 'course',
+    'Your current year of Study': 'year_study',
+    'What is your CGPA?': 'cgpa',
+    'Marital status': 'marital_status',
+    'Do you have Depression?': 'depression',
+    'Do you have Anxiety?': 'anxiety',
+    'Do you have Panic attack?': 'panic',
+    'Did you seek any specialist for a treatment?': 'seek_treatment'
 })
 
-# =========================
-# 2. Inicializar la app
-# =========================
-app = dash.Dash(__name__)
-server = app.server  # por si algún hosting lo necesita
+map_yn = {'Yes': 1, 'No': 0, 'YES': 1, 'NO': 0}
 
-# =========================
-# 3. Layout (interfaz)
-# =========================
-app.layout = html.Div(
-    style={"maxWidth": "800px", "margin": "0 auto", "fontFamily": "Arial"},
-    children=[
-        html.H1("Prueba de servidor Dash + Plotly", style={"textAlign": "center"}),
+for col in ['depression', 'anxiety', 'panic', 'seek_treatment']:
+    df[col + '_bin'] = df[col].map(map_yn)
 
-        html.P(
-            "Selecciona la función que quieres visualizar:",
-            style={"marginTop": "20px"}
-        ),
+df['any_issue'] = df[['depression_bin', 'anxiety_bin', 'panic_bin']].max(axis=1)
+mask_issue = df['any_issue'] == 1
 
-        dcc.Dropdown(
-            id="funcion-dropdown",
-            options=[
-                {"label": "sin(x)", "value": "sin(x)"},
-                {"label": "cos(x)", "value": "cos(x)"},
-            ],
-            value="sin(x)",
-            clearable=False,
-            style={"width": "50%"}
-        ),
+# --------------------------------------------------------
+# Gráficas
+# --------------------------------------------------------
+prev_genero = df.groupby('gender')['any_issue'].mean().reset_index()
+fig1 = px.bar(prev_genero, x='gender', y='any_issue',
+              title="Prevalencia de problemas por género")
+fig1.update_yaxes(tickformat=".0%")
 
-        dcc.Graph(
-            id="grafica-funcion",
-            style={"marginTop": "30px"}
-        ),
-    ]
-)
+prev_cgpa = df.groupby('cgpa')['any_issue'].mean().reset_index()
+fig2 = px.bar(prev_cgpa, x='cgpa', y='any_issue',
+              title="Salud mental según CGPA")
+fig2.update_yaxes(tickformat=".0%")
 
-# =========================
-# 4. Callback interactivo
-# =========================
-@app.callback(
-    Output("grafica-funcion", "figure"),
-    Input("funcion-dropdown", "value")
-)
-def actualizar_grafica(nombre_funcion):
-    fig = px.line(
-        df,
-        x="x",
-        y=nombre_funcion,
-        title=f"Gráfica de {nombre_funcion}",
-        labels={"x": "x", nombre_funcion: nombre_funcion}
-    )
-    fig.update_layout(template="plotly_white")
-    return fig
+help_df = df[mask_issue].groupby('seek_treatment')['any_issue'].count().reset_index()
+fig3 = px.pie(help_df, names='seek_treatment', values='any_issue',
+              title="¿Buscaron ayuda profesional?")
 
-# =========================
-# 5. RUN para Render (Dash 3+)
-# =========================
-if __name__ == "__main__":
+help_gender = df[mask_issue].groupby(['gender', 'seek_treatment'])['any_issue'].count().reset_index()
+fig4 = px.bar(help_gender, x='gender', y='any_issue', color='seek_treatment',
+              barmode='group',
+              title="Búsqueda de ayuda por género")
+
+# --------------------------------------------------------
+# Dash App
+# --------------------------------------------------------
+app = Dash(__name__)
+
+app.layout = html.Div([
+    html.H1("Dashboard Salud Mental Estudiantes"),
+    dcc.Tabs([
+        dcc.Tab(label="Por género", children=[dcc.Graph(figure=fig1)]),
+        dcc.Tab(label="Por CGPA", children=[dcc.Graph(figure=fig2)]),
+        dcc.Tab(label="Búsqueda de ayuda", children=[dcc.Graph(figure=fig3)]),
+        dcc.Tab(label="Ayuda por género", children=[dcc.Graph(figure=fig4)]),
+    ])
+])
+
+# --------------------------------------------------------
+# Iniciar servidor en Render
+# --------------------------------------------------------
+if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8050))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port, debug=False)
