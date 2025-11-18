@@ -1,7 +1,1 @@
-services:
-  - type: web
-    name: dashboard-salud-mental
-    env: python
-    plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+pip freeze > requirements.txt
