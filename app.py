@@ -1,74 +1,104 @@
-import pandas as pd
-import plotly.express as px
-from dash import Dash, dcc, html
+# =============================================================================
+# app.py
+# =============================================================================
+
+# 1. IMPORTAR LIBRERÍAS
+# =============================================================================
 import os
+import pandas as pd
+import numpy as np
 
-# --------------------------------------------------------
-# Cargar datos
-# --------------------------------------------------------
-df = pd.read_csv("data/Student Mental health.csv")
+import dash
+from dash import dcc, html
+import plotly.express as px
 
-df = df.rename(columns={
-    'Choose your gender': 'gender',
-    'Age': 'age',
-    'What is your course?': 'course',
-    'Your current year of Study': 'year_study',
-    'What is your CGPA?': 'cgpa',
-    'Marital status': 'marital_status',
-    'Do you have Depression?': 'depression',
-    'Do you have Anxiety?': 'anxiety',
-    'Do you have Panic attack?': 'panic',
-    'Did you seek any specialist for a treatment?': 'seek_treatment'
+# =============================================================================
+# 2. CARGA DEL CONJUNTO DE DATOS
+# =============================================================================
+# Ruta relativa segura para Render
+df_path = os.path.join(os.path.dirname(__file__), "data", "Student_Mental_health.csv")
+df = pd.read_csv(df_path)
+
+# =============================================================================
+# 3. LIMPIEZA Y TRANSFORMACIÓN DE LOS DATOS
+# =============================================================================
+
+# 3.1 Estandarizar nombres de columnas
+df.columns = (
+    df.columns
+    .str.strip()
+    .str.lower()
+    .str.replace(" ", "_")
+    .str.replace("-", "_")
+)
+
+# 3.2 Tratamiento de valores nulos
+for col in df.columns:
+    if df[col].dtype.name == "category":
+        df[col] = df[col].cat.add_categories("Desconocido").fillna("Desconocido")
+    elif df[col].dtype == "object":
+        df[col] = df[col].fillna("Nulo")
+    else:
+        df[col] = df[col].fillna(df[col].median())
+
+# 3.3 Eliminar duplicados
+df = df.drop_duplicates()
+
+# =============================================================================
+# 4. NORMALIZACIÓN DE CAMPOS ESPECÍFICOS
+# =============================================================================
+course_map = {
+    "bcs": "Computer Science",
+    "bit": "Information Technology",
+    "engine": "Engineering",
+    "engin": "Engineering",
+    "engineering": "Engineering",
+    "mhsc": "Health Sciences",
+    "biomedical science": "Biomedical Science",
+    "koe": "Education",
+    "koe ": "Education",
+    "benl": "English",
+    "ala": "Arts and Letters",
+    "psychology": "Psychology",
+    "irkhs": "Islamic Studies",
+    "kirkhs": "Islamic Studies",
+    "kirkhs ": "Islamic Studies",
+    "islamic education": "Islamic Education",
+    "pendidikan islam": "Islamic Education",
+    "fiqh": "Islamic Jurisprudence",
+    "fiqh fatwa": "Islamic Jurisprudence",
+    "nursing": "Nursing",
+    "diploma nursing": "Nursing",
+    "marine science": "Marine Science",
+    "banking studies": "Banking Studies",
+    "mathemathics": "Mathematics",
+    "communication": "Communication",
+    "cts": "Computer Technology",
+}
+
+df["what_is_your_course?"] = (
+    df["what_is_your_course?"]
+    .astype(str)
+    .str.strip()
+    .str.lower()
+    .replace(course_map)
+)
+
+df["your_current_year_of_study"] = (
+    df["your_current_year_of_study"]
+    .astype(str)
+    .str.lower()
+    .str.replace("year", "")
+    .str.strip()
+    .replace({"1": "Year 1", "2": "Year 2", "3": "Year 3", "4": "Year 4"})
+)
+
+df["what_is_your_cgpa?"] = df["what_is_your_cgpa?"].astype(str).str.strip()
+df["what_is_your_cgpa?"] = df["what_is_your_cgpa?"].replace({
+    "3.50 - 4.00": "3.50 - 4.00",
+    "3.50-4.00": "3.50 - 4.00"
 })
 
-map_yn = {'Yes': 1, 'No': 0, 'YES': 1, 'NO': 0}
-
-for col in ['depression', 'anxiety', 'panic', 'seek_treatment']:
-    df[col + '_bin'] = df[col].map(map_yn)
-
-df['any_issue'] = df[['depression_bin', 'anxiety_bin', 'panic_bin']].max(axis=1)
-mask_issue = df['any_issue'] == 1
-
-# --------------------------------------------------------
-# Gráficas
-# --------------------------------------------------------
-prev_genero = df.groupby('gender')['any_issue'].mean().reset_index()
-fig1 = px.bar(prev_genero, x='gender', y='any_issue',
-              title="Prevalencia de problemas por género")
-fig1.update_yaxes(tickformat=".0%")
-
-prev_cgpa = df.groupby('cgpa')['any_issue'].mean().reset_index()
-fig2 = px.bar(prev_cgpa, x='cgpa', y='any_issue',
-              title="Salud mental según CGPA")
-fig2.update_yaxes(tickformat=".0%")
-
-help_df = df[mask_issue].groupby('seek_treatment')['any_issue'].count().reset_index()
-fig3 = px.pie(help_df, names='seek_treatment', values='any_issue',
-              title="¿Buscaron ayuda profesional?")
-
-help_gender = df[mask_issue].groupby(['gender', 'seek_treatment'])['any_issue'].count().reset_index()
-fig4 = px.bar(help_gender, x='gender', y='any_issue', color='seek_treatment',
-              barmode='group',
-              title="Búsqueda de ayuda por género")
-
-# --------------------------------------------------------
-# Dash App
-# --------------------------------------------------------
-app = Dash(__name__)
-
-app.layout = html.Div([
-    html.H1("Dashboard Salud Mental Estudiantes"),
-    dcc.Tabs([
-        dcc.Tab(label="Por género", children=[dcc.Graph(figure=fig1)]),
-        dcc.Tab(label="Por CGPA", children=[dcc.Graph(figure=fig2)]),
-        dcc.Tab(label="Búsqueda de ayuda", children=[dcc.Graph(figure=fig3)]),
-        dcc.Tab(label="Ayuda por género", children=[dcc.Graph(figure=fig4)]),
-    ])
-])
-
-# --------------------------------------------------------
-# Iniciar servidor en Render
-# --------------------------------------------------------
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 8050))
-    app.run(host="0.0.0.0", port=port, debug=False)
+yn_cols = [
+    "marital_status",
+    "do_you_have_depression?",
