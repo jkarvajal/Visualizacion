@@ -16,7 +16,7 @@ import plotly.express as px
 # 2. CARGA DEL CONJUNTO DE DATOS
 # =============================================================================
 # Ruta relativa segura para Render
-df_path = os.path.join(os.path.dirname(__file__), "data", "Student_Mental_health.csv")
+df_path = os.path.join(os.path.dirname(__file__), "data", "Student Mental health.csv")
 df = pd.read_csv(df_path)
 
 # =============================================================================
@@ -270,3 +270,4 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
