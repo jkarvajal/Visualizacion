@@ -1,29 +1,21 @@
-# =============================================================================
-# app.py
-# =============================================================================
+# %% [markdown]
+# # Bloque 1 – Importar librerías, cargar y preparar datos
 
-# 1. IMPORTAR LIBRERÍAS
-# =============================================================================
-import os
+# %%
+# 0. Cargar librerías
 import pandas as pd
 import numpy as np
-
 import dash
 from dash import dcc, html
 import plotly.express as px
+import plotly.graph_objects as go
+# 1. Carga del conjunto de datos
+# Asegurarse de que el archivo este en la ruta dada/
+df = pd.read_csv("data/Student_Mental_health.csv")
+print("\nDimensión Df:", df.shape)
 
-# =============================================================================
-# 2. CARGA DEL CONJUNTO DE DATOS
-# =============================================================================
-# Ruta relativa segura para Render
-df_path = os.path.join(os.path.dirname(__file__), "data", "Student Mental health.csv")
-df = pd.read_csv(df_path)
-
-# =============================================================================
-# 3. LIMPIEZA Y TRANSFORMACIÓN DE LOS DATOS
-# =============================================================================
-
-# 3.1 Estandarizar nombres de columnas
+# %%
+# 2. Estandarizar nombres de columnas cambiar _ por espacios y pasar a minúsculas
 df.columns = (
     df.columns
     .str.strip()
@@ -31,8 +23,14 @@ df.columns = (
     .str.replace(" ", "_")
     .str.replace("-", "_")
 )
+print("\nTipos de datos:")
+df.info()
 
-# 3.2 Tratamiento de valores nulos
+print("\nValores nulos por columna:")
+print(df.isnull().sum())
+
+# %%
+# 3. Tratamiento simple de valores nulos
 for col in df.columns:
     if df[col].dtype.name == "category":
         df[col] = df[col].cat.add_categories("Desconocido").fillna("Desconocido")
@@ -41,12 +39,15 @@ for col in df.columns:
     else:
         df[col] = df[col].fillna(df[col].median())
 
-# 3.3 Eliminar duplicados
+# %%
+# 4. Eliminar duplicados
+duplicates = df.duplicated().sum()
+print("Duplicados encontrados:", duplicates)
 df = df.drop_duplicates()
 
-# =============================================================================
-# 4. NORMALIZACIÓN DE CAMPOS ESPECÍFICOS
-# =============================================================================
+# 5. Normalizaciones específicas
+
+# 5.1 Normalizar curso
 course_map = {
     "bcs": "Computer Science",
     "bit": "Information Technology",
@@ -84,6 +85,8 @@ df["what_is_your_course?"] = (
     .replace(course_map)
 )
 
+# %%
+# 5.2 Año de estudio
 df["your_current_year_of_study"] = (
     df["your_current_year_of_study"]
     .astype(str)
@@ -93,12 +96,14 @@ df["your_current_year_of_study"] = (
     .replace({"1": "Year 1", "2": "Year 2", "3": "Year 3", "4": "Year 4"})
 )
 
+# 5.3 CGPA
 df["what_is_your_cgpa?"] = df["what_is_your_cgpa?"].astype(str).str.strip()
 df["what_is_your_cgpa?"] = df["what_is_your_cgpa?"].replace({
     "3.50 - 4.00": "3.50 - 4.00",
     "3.50-4.00": "3.50 - 4.00"
 })
 
+# 5.4 Convertir columnas Yes/No a 1/0
 yn_cols = [
     "marital_status",
     "do_you_have_depression?",
@@ -108,14 +113,18 @@ yn_cols = [
 ]
 
 for col in yn_cols:
-    df[col] = df[col].map({"Yes": 1, "No": 0})
+    if col in df.columns:
+        df[col] = df[col].map({"Yes": 1, "No": 0})
 
-df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+# 5.5 Timestamp a datetime (si existe)
+if "timestamp" in df.columns:
+    df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+
+# 5.6 Edad a entero
 df["age"] = df["age"].astype(float).astype(int)
 
-# =============================================================================
-# 5. TRADUCCIÓN DE NOMBRES DE COLUMNAS AL ESPAÑOL
-# =============================================================================
+# %%
+# 6. Traducción de nombres de columnas al español
 column_translate = {
     "timestamp": "fecha_registro",
     "choose_your_gender": "genero",
@@ -132,12 +141,42 @@ column_translate = {
 
 df = df.rename(columns=column_translate)
 
-# =============================================================================
-# 6. CREACIÓN DE FIGURAS (PLOTLY)
-# =============================================================================
-counts_dep = df["tiene_depresion"].value_counts().sort_index()
-percent_dep = (counts_dep / counts_dep.sum() * 100).round(1)
+print("\nEncabezados finales del DataFrame:")
+print(df.columns)
 
+df.head()
+
+# %% [markdown]
+# # Bloque 2. Cálculos agregados y figuras para cada parte del storytelling
+# Aquí se generan las figuras siguiendo la estructura: contexto → factores académicos → personales → ayuda
+
+# %% [markdown]
+# ## Pestaña 1 Contexto: Calculos
+
+# %%
+# BLOQUE 2: Calculos agregados y figuras para cada parte del storytelling con plotly
+# ______________________________________________________________________
+# -------------------------------
+# 2.1 Pestaña Contexto: Sección Detalle por síntoma, Gráficas: Distribución general de síntomas
+# -------------------------------
+# Conteos Sí/No de cada síntoma
+counts_dep = df["tiene_depresion"].value_counts().sort_index()
+counts_ans = df["tiene_ansiedad"].value_counts().sort_index()
+counts_panic = df["tiene_ataques_panico"].value_counts().sort_index()
+
+# Porcentajes
+percent_dep = (counts_dep / counts_dep.sum() * 100).round(1)
+percent_ans = (counts_ans / counts_ans.sum() * 100).round(1)
+percent_panic = (counts_panic / counts_panic.sum() * 100).round(1)
+
+# %% [markdown]
+# ## Pestaña 1 Contexto: Distribución de estudiantes con síntomas de depresión
+
+# %%
+# Gráfico 1: Dispersión
+# _______________________________________________________________
+# Opciones de gráfica tipo barra
+'''
 fig_dep = px.bar(
     x=["No (0)", "Sí (1)"],
     y=counts_dep.values,
@@ -148,23 +187,229 @@ fig_dep.update_traces(
     text=[f"{v} ({p}%)" for v, p in zip(counts_dep.values, percent_dep.values)],
     textposition="outside"
 )
-fig_dep.update_layout(yaxis=dict(title="Cantidad de estudiantes"))
+fig_dep.update_yaxes(range=[0, counts_dep.max() + 7])   # Ajuste de etiquetas
 
+# Grafico 2: Ansiedad
+# _______________________________________________________________
+fig_ans = px.bar(
+    x=["No (0)", "Sí (1)"],
+    y=counts_ans.values,
+    labels={"x": "Respuesta", "y": "Cantidad de estudiantes"},
+    title="Distribución de estudiantes con síntomas de ansiedad"
+)
+fig_ans.update_traces(
+    text=[f"{v} ({p}%)" for v, p in zip(counts_ans.values, percent_ans.values)],
+    textposition="outside"
+)
+fig_ans.update_yaxes(range=[0, counts_ans.max() + 7])   # Ajuste de etiquetas
+
+# Gráfico 3: Ataques de pánico
+# _______________________________________________________________
+fig_panic = px.bar(
+    x=["No (0)", "Sí (1)"],
+    y=counts_panic.values,
+    labels={"x": "Respuesta", "y": "Cantidad de estudiantes"},
+    title="Distribución de estudiantes con ataques de pánico"
+)
+fig_panic.update_traces(
+    text=[f"{v} ({p}%)" for v, p in zip(counts_panic.values, percent_panic.values)],
+    textposition="outside"
+)
+fig_panic.update_yaxes(range=[0, counts_panic.max() + 7])   # Ajuste de etiquetas
+'''
+# ============================================================
+# GRÁFICO 1: DEPRESIÓN (Pie)
+# ============================================================
+fig_dep = px.pie(
+    names=["No (0)", "Sí (1)"],
+    values=counts_dep.values,
+    title="Distribución de estudiantes con síntomas de depresión"
+)
+fig_dep.update_traces(
+    text=[f"{v} ({p}%)" for v, p in zip(counts_dep.values, percent_dep.values)],
+    textinfo="text+percent",  # Muestra tanto el texto personalizado como el %
+    textposition="inside"
+)
+
+# %% [markdown]
+# ## Pestaña 1 Contexto: Distribución de estudiantes con síntomas de ansiedad
+
+# %%
+# ============================================================
+# GRÁFICO 2: ANSIEDAD (Pie)
+# ============================================================
+fig_ans = px.pie(
+    names=["No (0)", "Sí (1)"],
+    values=counts_ans.values,
+    title="Distribución de estudiantes con síntomas de ansiedad"
+)
+fig_ans.update_traces(
+    text=[f"{v} ({p}%)" for v, p in zip(counts_ans.values, percent_ans.values)],
+    textinfo="text+percent",
+    textposition="inside"
+)
+
+# %% [markdown]
+# ## Pestaña 1 Contexto: Distribución de estudiantes con ataques de pánico
+
+# %%
+# ============================================================
+# GRÁFICO 3: ATAQUES DE PÁNICO (Pie)
+# ============================================================
+fig_panic = px.pie(
+    names=["No (0)", "Sí (1)"],
+    values=counts_panic.values,
+    title="Distribución de estudiantes con ataques de pánico"
+)
+fig_panic.update_traces(
+    text=[f"{v} ({p}%)" for v, p in zip(counts_panic.values, percent_panic.values)],
+    textinfo="text+percent",
+    textposition="inside"
+)
+
+# %% [markdown]
+# ## Pestaña 1 Contexto: Distribución de estudiantes por síntoma emocional
+
+# %%
+# Gráfico resumen: total de casos por síntoma
 counts_symptoms = pd.Series({
-    "Depresión (1)": df["tiene_depresion"].sum(),
-    "Ansiedad (1)": df["tiene_ansiedad"].sum(),
-    "Pánico (1)": df["tiene_ataques_panico"].sum()
+    "Depresión": df["tiene_depresion"].sum(),
+    "Ansiedad": df["tiene_ansiedad"].sum(),
+    "Ataques de pánico": df["tiene_ataques_panico"].sum()
 })
 
-fig_tendencia = px.line(
+# Gráfico tipo barra
+'''
+fig_resumen_sintomas = px.bar(
     x=counts_symptoms.index,
     y=counts_symptoms.values,
-    markers=True,
     labels={"x": "Síntoma", "y": "Número de estudiantes"},
-    title="Tendencia de síntomas emocionales en estudiantes"
+    title="Número de estudiantes que reportan cada síntoma emocional",
+    width=600,   # Ancho personalizado
+    height=450   # Opcional
 )
-fig_tendencia.update_layout(xaxis=dict(tickangle=15))
+#fig_resumen_sintomas.update_traces(text=counts_symptoms.values, textposition="outside")
 
+fig_resumen_sintomas.update_traces(
+    text=counts_symptoms.values,
+    textposition="outside"
+)
+
+# Ajustar espacio para que se vean los textos
+fig_resumen_sintomas.update_yaxes(range=[0, counts_symptoms.max() + 7])
+
+#fig_resumen_sintomas.show()
+'''
+# Gráfico tipo Pie
+fig_resumen_sintomas = px.pie(
+    names=counts_symptoms.index,
+    values=counts_symptoms.values,
+    title="Distribución de estudiantes por síntoma emocional",
+    hole=0,        # Si quieres tipo doughnut, cambia a 0.4
+)
+
+# Mostrar valores y porcentajes dentro o fuera del pie
+fig_resumen_sintomas.update_traces(
+    textinfo="label+value+percent",
+    textposition="inside"   # Usa "outside" si prefieres afuera
+)
+
+# fig_resumen_sintomas.show()  # En Dash no se necesita
+
+
+# %% [markdown]
+# # Pestaña 2 Factores Académicos
+# ## Pestaña 2 Estudiantes con depresión por programa académico
+
+# %%
+# 2.2 Factores académicos
+# -------------------------------
+
+# 2.2.1 Programa académico vs Depresión
+program_dep = (
+    df.groupby("programa_academico")["tiene_depresion"]
+    .sum()
+    .sort_values(ascending=False)
+)
+# Filtrar solo los que son mayores que 0
+program_dep = program_dep.loc[program_dep > 0]
+
+fig_programa_dep = px.bar(
+    x=program_dep.index,
+    y=program_dep.values,
+    labels={"x": "Programa académico", "y": "Estudiantes con depresión"},
+    title="Estudiantes con depresión por programa académico"
+)
+fig_programa_dep.update_layout(xaxis=dict(tickangle=75))
+
+# %%
+# 2.2.2 Promedio de calificaciones vs Depresión
+dep_por_cgpa = df.groupby("Promedio_de_calificaciones")["tiene_depresion"].sum().sort_index()
+# Filtrar intervalos con al menos un caso
+dep_por_cgpa = dep_por_cgpa[dep_por_cgpa > 0]
+
+fig_cgpa_dep = px.bar(
+    x=dep_por_cgpa.index,
+    y=dep_por_cgpa.values,
+    labels={"x": "Promedio de calificaciones (CGPA)", "y": "Estudiantes con depresión"},
+    title="Relación entre CGPA y depresión"
+)
+
+#fig_cgpa_dep.update_layout(xaxis=dict(tickangle=360))
+
+# %%
+# 2.2.3 Año de estudio vs Ansiedad y Depresión (nueva figura)
+anio_symptoms = (
+    df.groupby("año_estudio")[["tiene_ansiedad", "tiene_depresion"]]
+    .mean()
+    .reset_index()
+)
+
+fig_anio_symptoms = px.bar(
+    anio_symptoms,
+    x="año_estudio",
+    y=["tiene_ansiedad", "tiene_depresion"],
+    barmode="group",
+    labels={"value": "Proporción de estudiantes", "año_estudio": "Año de estudio", "variable": "Síntoma"},
+    title="Proporción de ansiedad y depresión por año de estudio"
+)
+
+
+# %%
+# -------------------------------
+# 2.3 FACTORES PERSONALES
+# -------------------------------
+
+# 2.3.1 Género vs Ataques de pánico
+panic_por_genero = df.groupby("genero")["tiene_ataques_panico"].mean().reset_index()
+
+fig_genero_panic = px.bar(
+    panic_por_genero,
+    x="genero",
+    y="tiene_ataques_panico",
+    labels={"genero": "Género", "tiene_ataques_panico": "Proporción con ataques de pánico"},
+    title="Proporción de estudiantes con ataques de pánico por género"
+)
+
+
+
+# %%
+# 2.3.2 Estado civil vs Ansiedad
+ans_por_estado = df.groupby("estado_civil")["tiene_ansiedad"].mean().reset_index()
+
+fig_estado_ans = px.bar(
+    ans_por_estado,
+    x="estado_civil",
+    y="tiene_ansiedad",
+    labels={"estado_civil": "Estado civil", "tiene_ansiedad": "Proporción con ansiedad"},
+    title="Proporción de estudiantes con ansiedad por estado civil"
+)
+fig_estado_ans
+
+
+
+# %%
+# 2.3.3 Correlaciones (Edad y síntomas)
 yn_cols_esp = [
     "tiene_depresion",
     "tiene_ansiedad",
@@ -174,95 +419,300 @@ yn_cols_esp = [
 numeric_cols = ["edad"] + yn_cols_esp
 corr = df[numeric_cols].corr()
 
+# Propuesta Maria Fernanda
+'''
 fig_corr = px.imshow(
     corr,
     text_auto=True,
     color_continuous_scale="Oranges",
-    title="Mapa de calor de correlaciones entre síntomas emocionales y edad"
+    title="Mapa de calor de correlaciones: edad, síntomas y búsqueda de tratamiento"
+)
+'''
+fig_corr = px.imshow(
+    corr,
+    text_auto=".2f",               # Muestra los valores con 2 decimales
+    color_continuous_scale="RdBu", # Colores rojo-azul para positiva/negativa
+    title="Mapa de calor de correlaciones: edad, síntomas y búsqueda de tratamiento",
+    width=700,
+    height=600,
+    aspect="auto"                  # Ajusta proporción de celdas
 )
 
-program_counts = df.groupby("programa_academico")["tiene_depresion"].sum().sort_values(ascending=False)
-fig_programa_dep = px.bar(
-    x=program_counts.index,
-    y=program_counts.values,
-    labels={"x": "Programa académico", "y": "Estudiantes con depresión"},
-    title="Relación entre Programa Académico y Síntoma de Depresión"
-)
-fig_programa_dep.update_layout(xaxis=dict(tickangle=75))
-
-dep_por_cgpa = df.groupby("Promedio_de_calificaciones")["tiene_depresion"].sum()
-fig_cgpa_dep = px.bar(
-    x=dep_por_cgpa.index,
-    y=dep_por_cgpa.values,
-    labels={"x": "Promedio de calificaciones", "y": "Estudiantes con depresión"},
-    title="Relación entre Promedio de Calificaciones y Depresión"
+# Ajustes de estilo
+fig_corr.update_layout(
+    title_x=0.5,                   # Centrar el título
+    coloraxis_colorbar=dict(
+        title="Correlación",
+        tickvals=[-1, -0.5, 0, 0.5, 1],
+        ticktext=["-1", "-0.5", "0", "0.5", "1"]
+    )
 )
 
-ans_por_estado_civil = df.groupby("estado_civil")["tiene_ansiedad"].sum()
-fig_estado_ans = px.bar(
-    x=ans_por_estado_civil.index,
-    y=ans_por_estado_civil.values,
-    labels={"x": "Estado civil", "y": "Estudiantes con ansiedad"},
-    title="Relación entre Estado Civil y Ansiedad"
+# Rotar etiquetas si es necesario
+fig_corr.update_xaxes(tickangle=45)
+fig_corr.update_yaxes(tickangle=0)
+
+# Mostrar la figura
+
+
+# %%
+# -------------------------------
+# 2.4 Acceso a ayuda profesional
+# -------------------------------
+
+# Proporción que busca tratamiento entre quienes SÍ tienen cada síntoma
+def prop_tratamiento(cond_col):
+    sub = df[df[cond_col] == 1]
+    if len(sub) == 0:
+        return 0
+    return sub["busco_tratamiento_especialista"].mean()
+
+help_dep = prop_tratamiento("tiene_depresion")
+help_ans = prop_tratamiento("tiene_ansiedad")
+help_panic = prop_tratamiento("tiene_ataques_panico")
+
+help_data = pd.DataFrame({
+    "Síntoma": ["Depresión", "Ansiedad", "Ataques de pánico"],
+    "Proporción_que_busca_tratamiento": [help_dep, help_ans, help_panic]
+})
+
+fig_help_symptoms = px.bar(
+    help_data,
+    x="Síntoma",
+    y="Proporción_que_busca_tratamiento",
+    labels={"Proporción_que_busca_tratamiento": "Proporción que busca tratamiento"},
+    title="Proporción de estudiantes con síntomas que buscan tratamiento especializado"
+)
+fig_help_symptoms.update_yaxes(tickformat=".0%")
+
+
+
+
+# %%
+# -------------------------------
+# 2.5 INSIGHT PRINCIPAL (Clímax)
+# -------------------------------
+
+# Para el clímax usamos la misma figura, pero con título más narrativo
+fig_insight = fig_help_symptoms.update_layout(
+    title="Brecha entre padecer síntomas y buscar ayuda profesional"
 )
 
-panic_por_genero = df.groupby("genero")["tiene_ataques_panico"].sum()
-fig_genero_panic = px.bar(
-    x=panic_por_genero.index,
-    y=panic_por_genero.values,
-    labels={"x": "Género", "y": "Estudiantes con ataques de pánico"},
-    title="Relación entre Género y Ataques de pánico"
-)
 
-# =============================================================================
-# 7. CONFIGURACIÓN DE LA APLICACIÓN DASH
+# %% [markdown]
+# # Bloque 3 – Layout de la app Dash con tabs narrativos
+# Aquí organizamos el storytelling: cada Tab responde a una parte de la guía.
+
+# %%
+# Bloque 3: Configuración del layout de Dash con storytelling
 # =============================================================================
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
     html.H1(
-        "Visualización de Salud Mental en Estudiantes",
-        style={"textAlign": "center", "marginBottom": "20px"}
+        "Storytelling: Salud Mental en Estudiantes Universitarios",
+        style={"textAlign": "center", "marginBottom": "10px"}
+    ),
+    html.P(
+        "Narrativa basada en el libro 'The Power of Data Storytelling' y el conjunto de datos 'Student Mental Health'.",
+        style={"textAlign": "center", "marginBottom": "30px"}
     ),
 
     dcc.Tabs([
-        dcc.Tab(label="Distribución de Depresión", children=[
+
+        # ---------------- Pestaña 1: Contexto ----------------
+        dcc.Tab(label="1. Contexto", children=[
             html.Br(),
-            html.P("Esta gráfica muestra cuántos estudiantes reportan síntomas de depresión."),
-            dcc.Graph(figure=fig_dep)
+            html.H2("Contexto del problema"),
+            html.P(
+                "La salud mental estudiantil es un tema prioritario a nivel mundial. "
+                "Factores como la presión académica, la carga de trabajo, el estrés financiero "
+                "y el aislamiento social influyen en el bienestar emocional de los estudiantes. "
+                "Este conjunto de datos recoge respuestas de estudiantes universitarios sobre "
+                "síntomas de depresión, ansiedad y ataques de pánico, junto con información "
+                "académica y personal."
+            ),
+            html.P(
+                "El objetivo de esta historia con datos es entender qué factores se asocian "
+                "con la presencia de estos síntomas y si los estudiantes buscan ayuda profesional."
+            ),
+            html.H3("Distribución general de síntomas"),
+            html.P("A continuación se muestra cuántos estudiantes reportan cada uno de los síntomas emocionales:"),
+            dcc.Graph(figure=fig_resumen_sintomas),
+            html.H4("Detalle por síntoma"),
+            html.Div([
+                dcc.Graph(figure=fig_dep, style={"width": "32%", "display": "inline-block"}),
+                dcc.Graph(figure=fig_ans, style={"width": "32%", "display": "inline-block"}),
+                dcc.Graph(figure=fig_panic, style={"width": "32%", "display": "inline-block"}),
+            ])
         ]),
-        dcc.Tab(label="Tendencia de Síntomas Emocionales", children=[
+
+        # ---------------- Pestaña 2: Factores académicos ----------------
+        dcc.Tab(label="2. Factores académicos", children=[
             html.Br(),
-            html.P("Comparación de la cantidad de estudiantes con depresión, ansiedad y ataques de pánico."),
-            dcc.Graph(figure=fig_tendencia)
+            html.H2("Relación entre factores académicos y salud mental"),
+            html.P(
+                "En esta sección exploramos cómo variables académicas como el programa, "
+                "el promedio de calificaciones (CGPA) y el año de estudio se asocian con "
+                "la presencia de síntomas de depresión y ansiedad."
+            ),
+
+            html.H3("Depresión por programa académico"),
+            html.P(
+                "Algunos programas concentran más estudiantes que reportan depresión, "
+                "lo que puede estar relacionado con la carga académica o el tipo de formación."
+            ),
+            dcc.Graph(figure=fig_programa_dep),
+
+            html.H3("Depresión por rango de CGPA"),
+            html.P(
+                "Aquí comparamos el número de estudiantes con depresión en cada rango de promedio "
+                "de calificaciones. Esto permite observar si un menor desempeño académico se asocia "
+                "con mayores síntomas depresivos."
+            ),
+            dcc.Graph(figure=fig_cgpa_dep),
+
+            html.H3("Ansiedad y depresión por año de estudio"),
+            html.P(
+                "La siguiente gráfica muestra la proporción de estudiantes con ansiedad y depresión "
+                "en cada año de estudio. Los primeros años suelen ser críticos por la adaptación al entorno universitario."
+            ),
+            dcc.Graph(figure=fig_anio_symptoms)
         ]),
-        dcc.Tab(label="Correlaciones (Edad y Síntomas)", children=[
+
+        # ---------------- Pestaña 3: Factores personales ----------------
+        dcc.Tab(label="3. Factores personales", children=[
             html.Br(),
-            html.P("Mapa de calor de correlaciones entre edad, síntomas emocionales y búsqueda de tratamiento."),
+            html.H2("Relación entre factores personales y salud mental"),
+            html.P(
+                "Además de las variables académicas, factores personales como el género, "
+                "la edad y el estado civil pueden influir en el bienestar emocional."
+            ),
+
+            html.H3("Ataques de pánico por género"),
+            html.P(
+                "Esta gráfica muestra la proporción de estudiantes que reportan ataques de pánico "
+                "según su género, lo que permite identificar posibles grupos más vulnerables."
+            ),
+            dcc.Graph(figure=fig_genero_panic),
+
+            html.H3("Ansiedad por estado civil"),
+            html.P(
+                "Aquí observamos la proporción de estudiantes con ansiedad en cada categoría de estado civil. "
+                "Las diferencias pueden estar relacionadas con redes de apoyo, carga familiar u otras responsabilidades."
+            ),
+            dcc.Graph(figure=fig_estado_ans),
+
+            html.H3("Correlaciones entre edad, síntomas y búsqueda de tratamiento"),
+            html.P(
+                "El mapa de calor resume la correlación entre la edad, los síntomas emocionales y "
+                "la búsqueda de tratamiento. Aunque las correlaciones no implican causalidad, ayudan a "
+                "identificar relaciones lineales entre variables."
+            ),
             dcc.Graph(figure=fig_corr)
         ]),
-        dcc.Tab(label="Programa Académico vs Depresión", children=[
+
+        # ---------------- Pestaña 4: Acceso a ayuda profesional ----------------
+        dcc.Tab(label="4. Acceso a ayuda profesional", children=[
             html.Br(),
-            html.P("Cantidad de estudiantes con depresión por programa académico."),
-            dcc.Graph(figure=fig_programa_dep)
+            html.H2("¿Los estudiantes buscan ayuda profesional?"),
+            html.P(
+                "Un aspecto crítico de la salud mental es la disposición a buscar apoyo profesional. "
+                "A continuación se muestra qué proporción de estudiantes con síntomas reporta haber "
+                "buscado tratamiento con un especialista."
+            ),
+            dcc.Graph(figure=fig_help_symptoms),
+            html.P(
+                "Podemos observar una brecha importante: aunque muchos estudiantes reportan síntomas, "
+                "solo una fracción de ellos busca ayuda profesional, lo que sugiere barreras como estigmas, "
+                "falta de información o acceso limitado a servicios."
+            )
         ]),
-        dcc.Tab(label="Calificaciones vs Depresión", children=[
+
+        # ---------------- Pestaña 5: Insight principal (Clímax) ----------------
+        dcc.Tab(label="5. Insight principal", children=[
             html.Br(),
-            html.P("Relación entre el promedio de calificaciones y los síntomas de depresión."),
-            dcc.Graph(figure=fig_cgpa_dep)
+            html.H2("Insight principal de la historia"),
+            html.P(
+                "El hallazgo más relevante de este análisis es la brecha entre la presencia de síntomas "
+                "y la búsqueda de ayuda profesional. Una parte significativa de los estudiantes que reportan "
+                "ansiedad, depresión o ataques de pánico no acude a un especialista."
+            ),
+            dcc.Graph(figure=fig_insight),
+            html.P(
+                "Este resultado sugiere que, además de identificar factores de riesgo, las instituciones "
+                "deben enfocarse en derribar barreras para el acceso a servicios de apoyo psicológico y "
+                "promover activamente el cuidado de la salud mental."
+            )
         ]),
-        dcc.Tab(label="Estado Civil vs Ansiedad", children=[
+
+        # ---------------- Pestaña 6: Limitaciones ----------------
+        dcc.Tab(label="6. Limitaciones del análisis", children=[
             html.Br(),
-            html.P("Relación entre estado civil y presencia de ansiedad."),
-            dcc.Graph(figure=fig_estado_ans)
+            html.H2("Limitaciones y consideraciones"),
+            html.P(
+                "Aunque este conjunto de datos ofrece información valiosa, es importante reconocer "
+                "algunas limitaciones que afectan la interpretación de los resultados:"
+            ),
+            html.Ul([
+                html.Li("Las respuestas son auto-reportadas y pueden incluir sesgos de percepción."),
+                html.Li("La muestra no representa a todos los estudiantes universitarios ni a todas las instituciones."),
+                html.Li("No se incluyen variables socioeconómicas ni antecedentes clínicos detallados."),
+                html.Li("Las relaciones observadas son correlaciones, no permiten establecer causalidad."),
+                html.Li("Puede existir sesgo de participación: responden más quienes tienen interés en el tema.")
+            ]),
+            html.P(
+                "Estas limitaciones no invalidan los hallazgos, pero sí invitan a interpretarlos con cautela "
+                "y a complementarlos con otros estudios cuantitativos y cualitativos."
+            )
         ]),
-        dcc.Tab(label="Género vs Ataques de Pánico", children=[
+
+        # ---------------- Pestaña 7: conclusión y recomendaciones ----------------
+        dcc.Tab(label="7. Conclusión y recomendaciones", children=[
             html.Br(),
-            html.P("Relación entre género y ataques de pánico."),
-            dcc.Graph(figure=fig_genero_panic)
+            html.H2("Conclusiones y recomendaciones"),
+            html.P(
+                "Los datos analizados muestran que la salud mental estudiantil está asociada tanto a factores "
+                "académicos como personales, y que existe una brecha considerable entre el padecimiento de "
+                "síntomas y la búsqueda de ayuda profesional."
+            ),
+            html.P(
+                "A partir de estos hallazgos, se pueden plantear algunas recomendaciones para instituciones educativas "
+                "y responsables de políticas de bienestar universitario:"
+            ),
+            html.Ul([
+                html.Li("Fortalecer los programas de bienestar institucional y servicios de apoyo psicológico."),
+                html.Li("Implementar campañas de sensibilización que reduzcan el estigma asociado a la salud mental."),
+                html.Li("Ofrecer acompañamiento académico a estudiantes con bajo rendimiento y alta carga emocional."),
+                html.Li("Diseñar rutas claras y accesibles para que los estudiantes puedan buscar ayuda a tiempo."),
+                html.Li("Monitorear de manera periódica el bienestar emocional como parte de la experiencia educativa.")
+            ]),
+            html.P(
+                "En síntesis, los datos no solo describen una realidad, sino que llaman a la acción: "
+                "cuidar la salud mental de los estudiantes es fundamental para su éxito académico y su "
+                "desarrollo integral."
+            )
         ]),
     ])
 ])
+
+
+# %% [markdown]
+# # Bloque 4 – Ejecutar la app localmente
+# En la última celda del notebook, solo necesitas:
+
+# %%
+# Bloque 4: Ejecucion local de la aplicación
+# ______________________________________________________________________________
+#if __name__ == "__main__":
+#    app.run(host="0.0.0.0", port=8050, debug=True)
+
+#if __name__ == "__main__":
+#    app.run(host="127.0.0.1", port=8050, debug=True)
+    # o simplemente:
+    # app.run(debug=True)
+
+
 
 # =============================================================================
 # 8. EJECUCIÓN EN RENDER
@@ -270,4 +720,5 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
