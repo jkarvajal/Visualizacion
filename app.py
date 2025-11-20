@@ -3,6 +3,7 @@
 
 # %%
 # 0. Cargar librerías
+import os
 import pandas as pd
 import numpy as np
 import dash
@@ -720,5 +721,6 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
