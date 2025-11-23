@@ -529,8 +529,7 @@ app.layout = html.Div([
                 "La salud mental estudiantil es un tema prioritario a nivel mundial. Factores como la presión académica, la carga de trabajo, el estrés financiero y el aislamiento social influyen en el bienestar emocional de los estudiantes. Este conjunto de datos recoge respuestas de estudiantes universitarios sobre síntomas de depresión, ansiedad y ataques de pánico, junto con información académica y personal."
             ),
             html.P(
-                "El objetivo de esta historia con datos es entender qué factores se asocian "
-                "con la presencia de estos síntomas y si los estudiantes buscan ayuda profesional."
+                "El objetivo de esta historia con datos es entender qué factores se asocian con la presencia de estos síntomas y si los estudiantes buscan ayuda profesional."
             ),
             html.H3("Distribución general de síntomas"),
             html.P("A continuación se muestra cuántos estudiantes reportan cada uno de los síntomas emocionales:"),
@@ -594,16 +593,13 @@ app.layout = html.Div([
 
             html.H3("Ansiedad por estado civil"),
             html.P(
-                "Aquí observamos la proporción de estudiantes con ansiedad en cada categoría de estado civil. "
-                "Las diferencias pueden estar relacionadas con redes de apoyo, carga familiar u otras responsabilidades."
+                "Aquí observamos la proporción de estudiantes con ansiedad en cada categoría de estado civil. Las diferencias pueden estar relacionadas con redes de apoyo, carga familiar u otras responsabilidades."
             ),
             dcc.Graph(figure=fig_estado_ans),
 
             html.H3("Correlaciones entre edad, síntomas y búsqueda de tratamiento"),
             html.P(
-                "El mapa de calor resume la correlación entre la edad, los síntomas emocionales y "
-                "la búsqueda de tratamiento. Aunque las correlaciones no implican causalidad, ayudan a "
-                "identificar relaciones lineales entre variables."
+                "El mapa de calor resume la correlación entre la edad, los síntomas emocionales y la búsqueda de tratamiento. Aunque las correlaciones no implican causalidad, ayudan a identificar relaciones lineales entre variables."
             ),
             dcc.Graph(figure=fig_corr)
         ]),
@@ -716,6 +712,7 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
