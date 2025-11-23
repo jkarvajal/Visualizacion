@@ -532,7 +532,8 @@ app.layout = html.Div([
                 "En Colombia, se calcula que el 44,7 % de los estudiantes reporta algún tipo de afectación emocional como estrés o ansiedad (El colombiano. (2025, 21 octubre).)"
             ),
             html.P(
-                "El objetivo de esta historia con datos es entender qué factores se asocian con la presencia de estos síntomas y si los estudiantes buscan ayuda profesional."
+                "Es por lo anterior que vemos la importancia de analizar a través de un conjunto de datos la relación entre la vida académica y el bienestar mental de los estudiantes"
+                "universitarios a fin de encontrar puntos de claves para implementar mejoras continuas en la salud y rendimiento estudiantil."
             ),
             html.H3("Distribución general de síntomas"),
             html.P("A continuación se muestra cuántos estudiantes reportan cada uno de los síntomas emocionales:"),
@@ -715,6 +716,7 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
