@@ -587,6 +587,62 @@ dcc.Tab(label="1. Contexto", children=[
 ]),
 
 
+        # ---------------- Pestaña 2: Factores academicos ----------------
+
+        # ---------------- Pestaña 2: Factores académicos ----------------
+        
+dcc.Tab(label="2. Factores académicos", children=[
+    html.Br(),
+    html.H2("Factores académicos en relación a la salud mental", style={"fontWeight": "bold"}),
+
+    # ----- INTRODUCCIÓN -----
+    html.P(
+        "La siguiente variable por explorar es el programa académico en relación con los estudiantes que tienen "
+        "depresión. Se encuentra que priman con un 2.5 las carreras de tecnología de la información y ciencias "
+        "computacionales; a continuación, se encuentran Inglés, Psicología y Educación con un 2, y con una menor "
+        "cantidad se encuentran las carreras restantes de los alumnos encuestados."
+    ),
+
+    # ----- GRÁFICA 1: Estudiantes con depresión por programa -----
+    html.H3("Estudiantes con depresión por programa académico"),
+    dcc.Graph(figure=fig_programa_dep),
+
+    html.Br(),
+
+    # ----- TEXTO 2 -----
+    html.P(
+        "De igual forma, se toma la siguiente variable a considerar, la cual relaciona los estudiantes con "
+        "depresión con el promedio de calificaciones. Podemos observar que el promedio acumulado de calificaciones, "
+        "considerado una medida del rendimiento académico, oscila entre 3.0 y 3.49 con aproximadamente 17 estudiantes; "
+        "contiguo a este, el rango de 3.5 a 4.0 con aproximadamente 13 estudiantes; y finalmente el rango entre "
+        "2.5 y 2.9 con cerca de 3 estudiantes. Dado lo anterior, la mayoría de los estudiantes superan una media "
+        "académica, sin embargo, es una calificación baja para unas expectativas académicas elevadas."
+    ),
+
+    # ----- GRÁFICA 2: CGPA y depresión -----
+    html.H3("Relación entre CGPA y depresión"),
+    dcc.Graph(figure=fig_cgpa_dep),
+
+    html.Br(),
+
+    # ----- TEXTO 3 -----
+    html.P(
+        "Continuando con las relaciones de las variables de depresión, anexamos la variable de ansiedad en relación "
+        "al año de estudio. Podemos observar que en el tercer año se encuentra el mayor número de estudiantes con "
+        "depresión y el segundo mayor número de estudiantes con ansiedad; mientras que en el segundo año se encuentra "
+        "una misma cantidad de estudiantes con ansiedad y con depresión. Esto puede relacionarse a que los momentos "
+        "críticos de un estudiante suelen ser antes del último año, pues se toman decisiones importantes como la "
+        "modalidad y tema de grado."
+    ),
+
+    # ----- GRÁFICA 3: Año de estudio vs síntomas -----
+    html.H3("Ansiedad y depresión por año de estudio"),
+    dcc.Graph(figure=fig_anio_symptoms),
+
+    html.Br(),
+]),
+       
+        
         # ---------------- Pestaña 3: Factores personales ----------------
         dcc.Tab(label="3. Factores personales", children=[
             html.Br(),
@@ -724,6 +780,7 @@ dcc.Tab(label="1. Contexto", children=[
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
