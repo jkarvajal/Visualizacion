@@ -315,6 +315,8 @@ fig_resumen_sintomas.update_traces(
     textposition="inside"   # Usa "outside" si prefieres afuera
 )
 
+fig_resumen_sintomas.update_layout(title_x=0.5)
+
 # fig_resumen_sintomas.show()  # En Dash no se necesita
 
 
@@ -554,10 +556,9 @@ app.layout = html.Div([
             html.H3("Resultado general:"),
 
             html.P(
-                "Inicialmente se obtiene se muestra cuántos estudiantes reportan cada uno de los trastornos mentales"
+                "Inicialmente se muestra cuántos estudiantes reportan cada uno de los trastornos mentales"
             ),
 
-        
             
             html.H3("Distribución general de síntomas"),
             html.P("A continuación se muestra cuántos estudiantes reportan cada uno de los síntomas emocionales:"),
@@ -747,6 +748,7 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
