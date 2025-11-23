@@ -799,9 +799,7 @@ dcc.Tab(label="7. Conclusiones y recomendaciones", children=[
         "posibilitará medir su impacto sobre la permanencia estudiantil y el desempeño académico, consolidando "
         "un entorno universitario más saludable y preventivo."
     ),
-
     html.Br(),
-
     
     html.H2("Conclusiones", style={"fontWeight": "bold"}),
 
@@ -818,11 +816,11 @@ dcc.Tab(label="7. Conclusiones y recomendaciones", children=[
         "académicas que favorezcan la estabilidad emocional. De esta manera, se contribuye no solo a mejorar el "
         "desempeño académico, sino también a fomentar una formación integral que responda a las necesidades reales "
         "de los estudiantes y fortalezca su permanencia y desarrollo personal."
-    ),
-
+        )
+    ]),
     html.Br(),
-]),
-
+    ])
+])
 
 # %% [markdown]
 # # Bloque 4 – Ejecutar la app localmente
@@ -847,6 +845,7 @@ dcc.Tab(label="7. Conclusiones y recomendaciones", children=[
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
