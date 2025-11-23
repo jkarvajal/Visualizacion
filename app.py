@@ -526,15 +526,21 @@ app.layout = html.Div([
             html.Br(),
             html.H2("Contexto del problema"),
             html.P(
-                "En los últimos años, la salud mental ha adquirido una importancia exponencial debido al aumento de trastornos como la ansiedad o la depresión." 
-                "La OMS estima que 1 de cada 7 adolescentes presenta un trastorno mental (OMS 2025). En el ámbito educativo por otro lado, diversas investigaciones señalan que la depresión puede afectar"
-                "hasta al 66 % de los estudiantes universitarios y la ansieda2d a más del 40 %, influyendo directamente en su concentración, rendimiento y permanencia académica." 
+                "En los últimos años, la salud mental ha adquirido una importancia exponencial debido al aumento de trastornos como la ansiedad o la depresión. " 
+                "La OMS estima que 1 de cada 7 adolescentes presenta un trastorno mental (OMS 2025). En el ámbito educativo por otro lado, diversas investigaciones señalan que la depresión puede afectar "
+                "hasta al 66 % de los estudiantes universitarios y la ansieda2d a más del 40 %, influyendo directamente en su concentración, rendimiento y permanencia académica. " 
                 "En Colombia, se calcula que el 44,7 % de los estudiantes reporta algún tipo de afectación emocional como estrés o ansiedad (El colombiano. (2025, 21 octubre).)"
             ),
             html.P(
                 "Es por lo anterior que vemos la importancia de analizar a través de un conjunto de datos la relación entre la vida académica y el bienestar mental de los estudiantes"
                 "universitarios a fin de encontrar puntos de claves para implementar mejoras continuas en la salud y rendimiento estudiantil."
             ),
+            
+            html.H3("Descripción del conjunto de datos:"),
+            html.P(
+                "Cabe destacar que los datos son recopilados mediante una encuesta anónima en línea, respondida por 102 estudiantes universitarios de diversas disciplinas académicas y niveles de estudio, donde las preguntas y posteriormente las variables utilizadas son:"
+            ),
+            
             html.H3("Distribución general de síntomas"),
             html.P("A continuación se muestra cuántos estudiantes reportan cada uno de los síntomas emocionales:"),
             dcc.Graph(figure=fig_resumen_sintomas),
@@ -716,6 +722,7 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
