@@ -587,15 +587,13 @@ dcc.Tab(label="1. Contexto", children=[
 ]),
 
 
-        # ---------------- Pestaña 2: Factores academicos ----------------
-
         # ---------------- Pestaña 2: Factores académicos ----------------
         
 dcc.Tab(label="2. Factores académicos", children=[
     html.Br(),
     html.H2("Factores académicos en relación a la salud mental", style={"fontWeight": "bold"}),
 
-    # ----- INTRODUCCIÓN -----
+
     html.P(
         "La siguiente variable por explorar es el programa académico en relación con los estudiantes que tienen "
         "depresión. Se encuentra que priman con un 2.5 las carreras de tecnología de la información y ciencias "
@@ -603,13 +601,13 @@ dcc.Tab(label="2. Factores académicos", children=[
         "cantidad se encuentran las carreras restantes de los alumnos encuestados."
     ),
 
-    # ----- GRÁFICA 1: Estudiantes con depresión por programa -----
+  
     html.H3("Estudiantes con depresión por programa académico"),
     dcc.Graph(figure=fig_programa_dep),
 
     html.Br(),
 
-    # ----- TEXTO 2 -----
+  
     html.P(
         "De igual forma, se toma la siguiente variable a considerar, la cual relaciona los estudiantes con "
         "depresión con el promedio de calificaciones. Podemos observar que el promedio acumulado de calificaciones, "
@@ -619,13 +617,13 @@ dcc.Tab(label="2. Factores académicos", children=[
         "académica, sin embargo, es una calificación baja para unas expectativas académicas elevadas."
     ),
 
-    # ----- GRÁFICA 2: CGPA y depresión -----
+   
     html.H3("Relación entre CGPA y depresión"),
     dcc.Graph(figure=fig_cgpa_dep),
 
     html.Br(),
 
-    # ----- TEXTO 3 -----
+    
     html.P(
         "Continuando con las relaciones de las variables de depresión, anexamos la variable de ansiedad en relación "
         "al año de estudio. Podemos observar que en el tercer año se encuentra el mayor número de estudiantes con "
@@ -635,7 +633,7 @@ dcc.Tab(label="2. Factores académicos", children=[
         "modalidad y tema de grado."
     ),
 
-    # ----- GRÁFICA 3: Año de estudio vs síntomas -----
+   
     html.H3("Ansiedad y depresión por año de estudio"),
     dcc.Graph(figure=fig_anio_symptoms),
 
@@ -644,117 +642,186 @@ dcc.Tab(label="2. Factores académicos", children=[
        
         
         # ---------------- Pestaña 3: Factores personales ----------------
-        dcc.Tab(label="3. Factores personales", children=[
-            html.Br(),
-            html.H2("Relación entre factores personales y salud mental"),
-            html.P(
-                "Además de las variables académicas, factores personales como el género, "
-                "la edad y el estado civil pueden influir en el bienestar emocional."
-            ),
 
-            html.H3("Ataques de pánico por género"),
-            html.P(
-                "Esta gráfica muestra la proporción de estudiantes que reportan ataques de pánico "
-                "según su género, lo que permite identificar posibles grupos más vulnerables."
-            ),
-            dcc.Graph(figure=fig_genero_panic),
+dcc.Tab(label="3. Factores personales", children=[
+    html.Br(),
 
-            html.H3("Ansiedad por estado civil"),
-            html.P(
-                "Aquí observamos la proporción de estudiantes con ansiedad en cada categoría de estado civil. Las diferencias pueden estar relacionadas con redes de apoyo, carga familiar u otras responsabilidades."
-            ),
-            dcc.Graph(figure=fig_estado_ans),
+    html.H2("Factores personales en relación a la salud mental", style={"fontWeight": "bold"}),
 
-            html.H3("Correlaciones entre edad, síntomas y búsqueda de tratamiento"),
-            html.P(
-                "El mapa de calor resume la correlación entre la edad, los síntomas emocionales y la búsqueda de tratamiento. Aunque las correlaciones no implican causalidad, ayudan a identificar relaciones lineales entre variables."
-            ),
-            dcc.Graph(figure=fig_corr)
-        ]),
+    html.P(
+        "Pasando a las variables personales, tenemos el género, la edad y el estado civil, los cuales pueden "
+        "influir positiva o negativamente en los temas de salud mental, afectando el bienestar emocional. "
+        "Inicialmente, se identifica que las mujeres son más propensas a verse afectadas por ataques de pánico "
+        "en comparación con los hombres. Sin embargo, es importante señalar que esta diferencia no es altamente "
+        "marcada, lo cual puede sugerir que el entorno académico no presenta una discriminación significativa "
+        "entre géneros en este aspecto."
+    ),
+
+
+    html.H3("Proporción de estudiantes con ataques de pánico por género"),
+    dcc.Graph(figure=fig_genero_panic),
+
+    html.Br(),
+]),
 
         # ---------------- Pestaña 4: Acceso a ayuda profesional ----------------
-        dcc.Tab(label="4. Acceso a ayuda profesional", children=[
-            html.Br(),
-            html.H2("¿Los estudiantes buscan ayuda profesional?"),
-            html.P(
-                "Un aspecto crítico de la salud mental es la disposición a buscar apoyo profesional. "
-                "A continuación se muestra qué proporción de estudiantes con síntomas reporta haber "
-                "buscado tratamiento con un especialista."
-            ),
-            dcc.Graph(figure=fig_help_symptoms),
-            html.P(
-                "Podemos observar una brecha importante: aunque muchos estudiantes reportan síntomas, "
-                "solo una fracción de ellos busca ayuda profesional, lo que sugiere barreras como estigmas, "
-                "falta de información o acceso limitado a servicios."
-            )
-        ]),
+dcc.Tab(label="4. Acceso a ayuda profesional", children=[
+    html.Br(),
 
-        # ---------------- Pestaña 5: Insight principal (Clímax) ----------------
-        dcc.Tab(label="5. Insight principal", children=[
-            html.Br(),
-            html.H2("Insight principal de la historia"),
-            html.P(
-                "El hallazgo más relevante de este análisis es la brecha entre la presencia de síntomas "
-                "y la búsqueda de ayuda profesional. Una parte significativa de los estudiantes que reportan "
-                "ansiedad, depresión o ataques de pánico no acude a un especialista."
-            ),
-            dcc.Graph(figure=fig_insight),
-            html.P(
-                "Este resultado sugiere que, además de identificar factores de riesgo, las instituciones "
-                "deben enfocarse en derribar barreras para el acceso a servicios de apoyo psicológico y "
-                "promover activamente el cuidado de la salud mental."
-            )
-        ]),
+    html.H2("Acceso a ayuda profesional", style={"fontWeight": "bold"}),
+
+    html.P(
+        "Se tiene también la información de si los estudiantes contemplados han buscado o no una ayuda profesional, "
+        "llámese psicólogo y/o psiquiatra. Se observa que el 18% de los estudiantes con depresión han buscado ayuda "
+        "profesional, siendo este el porcentaje más alto en relación con las otras patologías; seguido por quienes "
+        "presentan ataques de pánico con un 9% y, finalmente, los estudiantes con ansiedad con un 12%. "
+        "Podemos observar una brecha importante: aunque muchos estudiantes reportan síntomas, solo una fracción de "
+        "ellos busca ayuda profesional, lo que sugiere la presencia de barreras como estigmas, falta de información "
+        "o acceso limitado a servicios especializados."
+    ),
+
+    html.H3("Brecha entre padecer síntomas y buscar ayuda profesional"),
+    dcc.Graph(figure=fig_insight),
+
+    html.Br(),
+]),
+
+        # ---------------- Pestaña 5: Insight principal ----------------
+dcc.Tab(label="5. Insight principal", children=[
+    html.Br(),
+
+    html.H2("Insight principal del análisis a través de la correlación", style={"fontWeight": "bold"}),
+
+    
+    html.P(
+        "Dadas las visualizaciones obtenidas, para encontrar el punto clave del análisis se obtiene una "
+        "matriz de correlación, representada por el mapa de calor, con el cual se puede analizar la relación "
+        "entre las variables tenidas en cuenta con las patologías identificadas (depresión, ansiedad y ataques "
+        "de pánico). Normalmente, en un mapa de calor los coeficientes de correlación oscilan entre -1 y 1, "
+        "donde valores cercanos a cero indican relaciones débiles y valores positivos o negativos más altos "
+        "indican relaciones fuertes."
+    ),
+
+  
+    html.H3("Mapa de calor de correlaciones: edad, síntomas y búsqueda de tratamiento"),
+    dcc.Graph(figure=fig_corr),
+
+    html.Br(),
+
+
+    html.H3("Análisis:"),
+
+
+    html.P(
+        "En primer lugar, la edad muestra correlaciones muy bajas con los síntomas de salud mental: "
+        "-0.07 con depresión, -0.09 con ansiedad y 0.06 con ataques de pánico. Esto indica que la edad "
+        "no es un factor determinante en la presencia de síntomas, pues personas de distintas edades "
+        "manifiestan niveles similares de malestar emocional."
+    ),
+    html.P(
+        "Por otro lado, se observa una relación moderada y positiva entre depresión y ansiedad (0.27), "
+        "y entre depresión y ataques de pánico (0.25). Esto sugiere que quienes reportan síntomas "
+        "depresivos tienden también a manifestar ansiedad o ataques de pánico, lo cual es coherente "
+        "con la frecuente coexistencia de estos trastornos. La relación entre ansiedad y ataques de pánico "
+        "es baja (0.08), lo que podría deberse a las características de la muestra o a la forma en que se "
+        "formularon las preguntas del cuestionario."
+    ),
+    html.P(
+        "En cuanto a la búsqueda de tratamiento especializado, esta variable mantiene la correlación más alta "
+        "del conjunto con la depresión (0.35). Esto indica que quienes reportan depresión tienen mayor probabilidad "
+        "de acudir a un profesional de salud mental. También existen correlaciones positivas con ansiedad (0.09) "
+        "y ataques de pánico (0.18), aunque de menor magnitud. Esto sugiere que la presencia de síntomas puede "
+        "influir en la decisión de buscar ayuda, pero especialmente cuando se presenta depresión."
+    ),
+
+    html.Br(),
+]),
+
 
         # ---------------- Pestaña 6: Limitaciones ----------------
-        dcc.Tab(label="6. Limitaciones del análisis", children=[
-            html.Br(),
-            html.H2("Limitaciones y consideraciones"),
-            html.P(
-                "Aunque este conjunto de datos ofrece información valiosa, es importante reconocer "
-                "algunas limitaciones que afectan la interpretación de los resultados:"
-            ),
-            html.Ul([
-                html.Li("Las respuestas son auto-reportadas y pueden incluir sesgos de percepción."),
-                html.Li("La muestra no representa a todos los estudiantes universitarios ni a todas las instituciones."),
-                html.Li("No se incluyen variables socioeconómicas ni antecedentes clínicos detallados."),
-                html.Li("Las relaciones observadas son correlaciones, no permiten establecer causalidad."),
-                html.Li("Puede existir sesgo de participación: responden más quienes tienen interés en el tema.")
-            ]),
-            html.P(
-                "Estas limitaciones no invalidan los hallazgos, pero sí invitan a interpretarlos con cautela "
-                "y a complementarlos con otros estudios cuantitativos y cualitativos."
-            )
-        ]),
+dcc.Tab(label="6. Limitaciones del análisis", children=[
+    html.Br(),
 
-        # ---------------- Pestaña 7: conclusión y recomendaciones ----------------
-        dcc.Tab(label="7. Conclusión y recomendaciones", children=[
-            html.Br(),
-            html.H2("Conclusiones y recomendaciones"),
-            html.P(
-                "Los datos analizados muestran que la salud mental estudiantil está asociada tanto a factores "
-                "académicos como personales, y que existe una brecha considerable entre el padecimiento de "
-                "síntomas y la búsqueda de ayuda profesional."
-            ),
-            html.P(
-                "A partir de estos hallazgos, se pueden plantear algunas recomendaciones para instituciones educativas "
-                "y responsables de políticas de bienestar universitario:"
-            ),
-            html.Ul([
-                html.Li("Fortalecer los programas de bienestar institucional y servicios de apoyo psicológico."),
-                html.Li("Implementar campañas de sensibilización que reduzcan el estigma asociado a la salud mental."),
-                html.Li("Ofrecer acompañamiento académico a estudiantes con bajo rendimiento y alta carga emocional."),
-                html.Li("Diseñar rutas claras y accesibles para que los estudiantes puedan buscar ayuda a tiempo."),
-                html.Li("Monitorear de manera periódica el bienestar emocional como parte de la experiencia educativa.")
-            ]),
-            html.P(
-                "En síntesis, los datos no solo describen una realidad, sino que llaman a la acción: "
-                "cuidar la salud mental de los estudiantes es fundamental para su éxito académico y su "
-                "desarrollo integral."
-            )
-        ]),
-    ])
-])
+    html.H2("Consideraciones y limitaciones del estudio", style={"fontWeight": "bold"}),
+
+    html.P(
+        "Cabe resaltar que, aunque el conjunto de datos proporciona información valiosa sobre la relación entre "
+        "la salud mental y diversos factores académicos y personales de los estudiantes universitarios, es importante "
+        "reconocer ciertas limitaciones que pueden influir en la interpretación de los resultados. Dentro de estas "
+        "consideraciones encontramos:"
+    ),
+
+    html.Ul([
+        html.Li(
+            "Las respuestas son auto-reportadas y pueden incluir sesgos de percepción o de deseabilidad social, "
+            "afectando la precisión de los datos."
+        ),
+        html.Li(
+            "El tamaño y la representatividad de la muestra (102 estudiantes) no es suficiente para generalizar "
+            "los resultados a toda la población universitaria."
+        ),
+        html.Li(
+            "La ausencia de variables relevantes no registradas, como factores socioeconómicos, antecedentes "
+            "clínicos, consumo de sustancias, redes de apoyo familiar y social, o carga académica real."
+        ),
+        html.Li(
+            "Las relaciones observadas son correlaciones y no permiten inferir causalidad entre las variables analizadas."
+        ),
+        html.Li(
+            "El uso de preguntas dicotómicas simplifica condiciones que, en la práctica, requieren evaluación "
+            "y diagnóstico clínico, lo cual puede limitar la profundidad e interpretación de los resultados."
+        ),
+    ]),
+
+    html.Br(),
+]),
+
+
+        # ---------------- Pestaña 7: Conclusiones y recomendaciones ----------------
+dcc.Tab(label="7. Conclusiones y recomendaciones", children=[
+    html.Br(),
+
+   
+    html.H2("Puntos de mejora y de recomendación", style={"fontWeight": "bold"}),
+
+    html.P(
+        "Con el fin de proceder a fortalecer el bienestar y salud mental estudiantil, se podría enfatizar en "
+        "realizar acciones estratégicas y de mejora encaminadas a la detección temprana y el acompañamiento oportuno. "
+        "Entre estas acciones, los tamizajes periódicos en programas o cohortes con mayor vulnerabilidad permitirían "
+        "identificar a tiempo a los estudiantes que requieren apoyo. De igual forma, es esencial mejorar el acceso "
+        "a los servicios de salud mental mediante campañas institucionales que reduzcan el estigma, amplíen la "
+        "información disponible y faciliten rutas ágiles hacia la atención psicológica o psiquiátrica. "
+        "Estas iniciativas deben complementarse con una revisión de las cargas académicas y con la incorporación "
+        "de talleres de manejo del estrés y habilidades socioemocionales en momentos críticos del semestre, "
+        "favoreciendo el equilibrio entre rendimiento y bienestar. Asimismo, la capacitación docente en señales "
+        "de alerta y derivación adecuada permitirá una respuesta más rápida y efectiva ante situaciones emergentes. "
+        "Finalmente, establecer un sistema de seguimiento y evaluación de los casos y de las intervenciones "
+        "posibilitará medir su impacto sobre la permanencia estudiantil y el desempeño académico, consolidando "
+        "un entorno universitario más saludable y preventivo."
+    ),
+
+    html.Br(),
+
+    
+    html.H2("Conclusiones", style={"fontWeight": "bold"}),
+
+    html.P(
+        "El análisis realizado permite comprender que la salud mental de los estudiantes universitarios es un aspecto "
+        "profundamente ligado a su experiencia académica y personal. Los resultados evidencian una presencia "
+        "significativa de síntomas como depresión, ansiedad y ataques de pánico, así como relaciones importantes entre "
+        "estos trastornos y variables como el programa de estudio o el año académico, lo que sugiere que determinadas "
+        "etapas y exigencias aumentan la vulnerabilidad emocional. Adicionalmente, se identifica una brecha "
+        "preocupante entre la aparición de síntomas y la búsqueda de apoyo profesional, lo cual señala la existencia "
+        "de barreras que limitan el acceso oportuno a servicios de salud mental. En conjunto, estos hallazgos resaltan "
+        "la necesidad de que las instituciones educativas reconozcan la salud mental como un elemento central del "
+        "bienestar y rendimiento estudiantil, promoviendo acciones preventivas, acompañamiento oportuno y condiciones "
+        "académicas que favorezcan la estabilidad emocional. De esta manera, se contribuye no solo a mejorar el "
+        "desempeño académico, sino también a fomentar una formación integral que responda a las necesidades reales "
+        "de los estudiantes y fortalezca su permanencia y desarrollo personal."
+    ),
+
+    html.Br(),
+]),
 
 
 # %% [markdown]
@@ -780,6 +847,7 @@ dcc.Tab(label="2. Factores académicos", children=[
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
