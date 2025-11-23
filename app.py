@@ -524,89 +524,68 @@ app.layout = html.Div([
     dcc.Tabs([
 
         # ---------------- Pestaña 1: Contexto ----------------
-        dcc.Tab(label="1. Contexto", children=[
-            html.Br(),
-            html.H2("Contexto del problema"),
-            html.P(
-                "En los últimos años, la salud mental ha adquirido una importancia exponencial debido al aumento de trastornos como la ansiedad o la depresión. " 
-                "La OMS estima que 1 de cada 7 adolescentes presenta un trastorno mental (OMS 2025). En el ámbito educativo por otro lado, diversas investigaciones señalan que la depresión puede afectar "
-                "hasta al 66 % de los estudiantes universitarios y la ansieda2d a más del 40 %, influyendo directamente en su concentración, rendimiento y permanencia académica. " 
-                "En Colombia, se calcula que el 44,7 % de los estudiantes reporta algún tipo de afectación emocional como estrés o ansiedad (El colombiano. (2025, 21 octubre).)"
-            ),
-            html.P(
-                "Es por lo anterior que vemos la importancia de analizar a través de un conjunto de datos la relación entre la vida académica y el bienestar mental de los estudiantes"
-                "universitarios a fin de encontrar puntos de claves para implementar mejoras continuas en la salud y rendimiento estudiantil."
-            ),
-            
-            html.H3("Descripción del conjunto de datos:"),
-            html.P(
-                "Cabe destacar que los datos son recopilados mediante una encuesta anónima en línea, respondida por 102 estudiantes universitarios de diversas disciplinas académicas y niveles de estudio, donde las preguntas y posteriormente las variables utilizadas son:"
-            ),
-            html.Ul([
-            html.Li("Seleccione su género: Identidad de género del encuestado."),
-            html.Li("Edad: La edad del estudiante."),
-            html.Li("¿Cuál es tu curso?: El programa académico en el que está matriculado el estudiante."),
-            html.Li("Año actual de estudio: Indica el año del estudiante (por ejemplo, primero, segundo, etc.)."),
-            html.Li("¿Cuál es su CGPA?: Promedio acumulado de calificaciones — una medida del rendimiento académico."),
-            html.Li("Estado civil: Si el estudiante es soltero, casado u otro estado."),
-            html.Li("¿Sufre usted de depresión, ansiedad o ataques de pánico?: Presencia autodeclarada de cada afección."),
-            html.Li("¿Consultó a algún especialista para recibir tratamiento?: Indica si se buscó ayuda profesional."),
-            ]),
+dcc.Tab(label="1. Contexto", children=[
+    html.Br(),
+    html.H2("Contexto del problema"),
+    html.P(
+        "En los últimos años, la salud mental ha adquirido una importancia exponencial debido al aumento "
+        "de trastornos como la ansiedad o la depresión. La OMS estima que 1 de cada 7 adolescentes presenta "
+        "un trastorno mental (OMS 2025). En el ámbito educativo por otro lado, diversas investigaciones "
+        "señalan que la depresión puede afectar hasta al 66 % de los estudiantes universitarios y la ansiedad "
+        "a más del 40 %, influyendo directamente en su concentración, rendimiento y permanencia académica. "
+        "En Colombia, se calcula que el 44,7 % de los estudiantes reporta algún tipo de afectación emocional "
+        "como estrés o ansiedad (El Colombiano, 2025)."
+    ),
+    html.P(
+        "Es por lo anterior que vemos la importancia de analizar este conjunto de datos para estudiar la "
+        "relación entre la vida académica y el bienestar mental de los estudiantes universitarios, con el fin "
+        "de encontrar puntos clave para implementar mejoras continuas."
+    ),
+    
+    html.H3("Descripción del conjunto de datos:"),
+    html.P(
+        "La información fue recopilada mediante una encuesta anónima en línea aplicada a 102 estudiantes "
+        "universitarios de diversas disciplinas. Las variables incluidas son:"
+    ),
+    html.Ul([
+        html.Li("Seleccione su género: Identidad de género del encuestado."),
+        html.Li("Edad: La edad del estudiante."),
+        html.Li("¿Cuál es tu curso?: Programa académico del estudiante."),
+        html.Li("Año actual de estudio: Nivel académico actual."),
+        html.Li("¿Cuál es su CGPA?: Promedio acumulado de calificaciones."),
+        html.Li("Estado civil: Situación civil del estudiante."),
+        html.Li("¿Sufre usted de depresión, ansiedad o ataques de pánico?: Síntomas reportados."),
+        html.Li("¿Consultó a algún especialista para recibir tratamiento?: Búsqueda de ayuda profesional."),
+    ]),
 
-            html.H3("Resultado general:"),
+    html.H3("Resultado general:"),
+    html.P("Inicialmente se observa cuántos estudiantes reportan cada uno de los trastornos mentales:"),
 
-            html.P(
-                "Inicialmente se muestra cuántos estudiantes reportan cada uno de los trastornos mentales"
-            ),
+    html.H3("Distribución general de síntomas"),
+    html.P("A continuación se muestra el porcentaje de estudiantes que reportan cada síntoma emocional:"),
+    dcc.Graph(figure=fig_resumen_sintomas),
 
-            
-            html.H3("Distribución general de síntomas"),
-            html.P("A continuación se muestra cuántos estudiantes reportan cada uno de los síntomas emocionales:"),
-            dcc.Graph(figure=fig_resumen_sintomas),
+    html.P("Distribuidos de la siguiente manera:"),
 
-             html.P(
-                "Distribuidos de la siguiente manera:"
-            ),
-            
-            html.H4("Detalle por síntoma"),
-            html.Div([
-                dcc.Graph(figure=fig_dep, style={"width": "32%", "display": "inline-block"}),
-                dcc.Graph(figure=fig_ans, style={"width": "32%", "display": "inline-block"}),
-                dcc.Graph(figure=fig_panic, style={"width": "32%", "display": "inline-block"}),
-        
+    html.H4("Detalle por síntoma"),
 
-        html.P(
-                "Se puede concluir que todos los estudiantes encuestados tenían o tuvieron algún tipo de trastornos mental, ya sea ansiedad, depresión o ataques de pánico, la distribución entre cada uno es muy similar, prima la depresión con un total del 34.3%, sin embargo, la diferencia entre cada una no es significativa."
-            ),
-            ]),
 
-        # ---------------- Pestaña 2: Factores académicos ----------------
-        dcc.Tab(label="2. Factores académicos", children=[
-            html.Br(),
-            html.H2("Relación entre factores académicos y salud mental"),
-            html.P(
-                "La siguiente variable por explorar es el programa académico en relación con los estudiantes que tienen depresión, se encuentran que priman con un 2.5 las carreras de tecnología de la información y ciencias computacionales, a continuación, se encuentran ingles, psicología y educación con un 2, y con una menor cantidad se encuentran las carreras restantes de los alumnos encuestados."
-            ),
+    html.Div([
+        html.Div([dcc.Graph(figure=fig_dep)], style={"width": "32%"}),
+        html.Div([dcc.Graph(figure=fig_ans)], style={"width": "32%"}),
+        html.Div([dcc.Graph(figure=fig_panic)], style={"width": "32%"}),
+    ], style={"display": "flex", "justify-content": "space-between"}),
 
-            html.H3("Depresión por programa académico"),
-            html.P(
-                "Algunos programas concentran más estudiantes que reportan depresión, "
-                "lo que puede estar relacionado con la carga académica o el tipo de formación."
-            ),
-            dcc.Graph(figure=fig_programa_dep),
+    html.Br(),
 
-            html.H3("Depresión por rango de CGPA"),
-            html.P(
-                "De igual forma, se toma la siguiente variable a considerar la cual relaciona los estudiantes con depresión con el promedio de calificaciones, podemos observar que el promedio acumulado de calificaciones  considerada una medida del rendimiento académico occila entre el 3.0 y 3.49 con aproximadamente 17 estudiantes, contiguo a el rango de 3.5-4.0 con aproximadamente 13 estudiantes y finalmente el rango entre 2.5 a 2.9 con 3 estudiantes, dado lo anterior la mayoría de estudiantes superan una media académica sin embargo es una calificación baja para unas buenas expectativas  académicas."
-            ),
-            dcc.Graph(figure=fig_cgpa_dep),
+    html.P(
+        "Se puede concluir que todos los estudiantes encuestados tenían o tuvieron algún tipo de trastorno "
+        "mental, ya sea ansiedad, depresión o ataques de pánico. Las proporciones entre cada condición son "
+        "muy similares, aunque la depresión presenta una ligera prevalencia del 34.3 %. Sin embargo, las "
+        "diferencias no son estadísticamente significativas."
+    ),
+]),
 
-            html.H3("Ansiedad y depresión por año de estudio"),
-            html.P(
-                "Continuando con las relaciones de las variables de depresión anexamos la variable de ansidad en relación al año de estudio, podemos observar que en el tercer año se encuentra el mayor numero de estudiantes con depresión y el segundo mayor numero de estudiantes con ansiedad, mientras que en el segundo año se encuentra una misma cantidad de estudiantes con ansiedad y los estudiantes con depresión esto puede relacionarse a que los momentos críticos de un estudiante suelen ser antes del último año puesto que se toman decisiones importantes como la modalidad y tema de grado."
-            ),
-            dcc.Graph(figure=fig_anio_symptoms)
-        ]),
 
         # ---------------- Pestaña 3: Factores personales ----------------
         dcc.Tab(label="3. Factores personales", children=[
@@ -745,6 +724,7 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
