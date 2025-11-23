@@ -540,10 +540,33 @@ app.layout = html.Div([
             html.P(
                 "Cabe destacar que los datos son recopilados mediante una encuesta anónima en línea, respondida por 102 estudiantes universitarios de diversas disciplinas académicas y niveles de estudio, donde las preguntas y posteriormente las variables utilizadas son:"
             ),
+            html.Ul([
+            html.Li("Seleccione su género: Identidad de género del encuestado."),
+            html.Li("Edad: La edad del estudiante."),
+            html.Li("¿Cuál es tu curso?: El programa académico en el que está matriculado el estudiante."),
+            html.Li("Año actual de estudio: Indica el año del estudiante (por ejemplo, primero, segundo, etc.)."),
+            html.Li("¿Cuál es su CGPA?: Promedio acumulado de calificaciones — una medida del rendimiento académico."),
+            html.Li("Estado civil: Si el estudiante es soltero, casado u otro estado."),
+            html.Li("¿Sufre usted de depresión, ansiedad o ataques de pánico?: Presencia autodeclarada de cada afección."),
+            html.Li("¿Consultó a algún especialista para recibir tratamiento?: Indica si se buscó ayuda profesional."),
+            ]),
+
+            html.H3("Resultado general:"),
+
+            html.P(
+                "Inicialmente se obtiene se muestra cuántos estudiantes reportan cada uno de los trastornos mentales"
+            ),
+
+        
             
             html.H3("Distribución general de síntomas"),
             html.P("A continuación se muestra cuántos estudiantes reportan cada uno de los síntomas emocionales:"),
             dcc.Graph(figure=fig_resumen_sintomas),
+
+             html.P(
+                "Distribuidos de la siguiente manera:"
+            ),
+            
             html.H4("Detalle por síntoma"),
             html.Div([
                 dcc.Graph(figure=fig_dep, style={"width": "32%", "display": "inline-block"}),
@@ -722,6 +745,7 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
