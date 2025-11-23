@@ -597,16 +597,13 @@ app.layout = html.Div([
 
             html.H3("Depresión por rango de CGPA"),
             html.P(
-                "Aquí comparamos el número de estudiantes con depresión en cada rango de promedio "
-                "de calificaciones. Esto permite observar si un menor desempeño académico se asocia "
-                "con mayores síntomas depresivos."
+                "De igual forma, se toma la siguiente variable a considerar la cual relaciona los estudiantes con depresión con el promedio de calificaciones, podemos observar que el promedio acumulado de calificaciones  considerada una medida del rendimiento académico occila entre el 3.0 y 3.49 con aproximadamente 17 estudiantes, contiguo a el rango de 3.5-4.0 con aproximadamente 13 estudiantes y finalmente el rango entre 2.5 a 2.9 con 3 estudiantes, dado lo anterior la mayoría de estudiantes superan una media académica sin embargo es una calificación baja para unas buenas expectativas  académicas."
             ),
             dcc.Graph(figure=fig_cgpa_dep),
 
             html.H3("Ansiedad y depresión por año de estudio"),
             html.P(
-                "La siguiente gráfica muestra la proporción de estudiantes con ansiedad y depresión "
-                "en cada año de estudio. Los primeros años suelen ser críticos por la adaptación al entorno universitario."
+                "Continuando con las relaciones de las variables de depresión anexamos la variable de ansidad en relación al año de estudio, podemos observar que en el tercer año se encuentra el mayor numero de estudiantes con depresión y el segundo mayor numero de estudiantes con ansiedad, mientras que en el segundo año se encuentra una misma cantidad de estudiantes con ansiedad y los estudiantes con depresión esto puede relacionarse a que los momentos críticos de un estudiante suelen ser antes del último año puesto que se toman decisiones importantes como la modalidad y tema de grado."
             ),
             dcc.Graph(figure=fig_anio_symptoms)
         ]),
@@ -748,6 +745,7 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
