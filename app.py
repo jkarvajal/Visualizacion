@@ -526,7 +526,9 @@ app.layout = html.Div([
             html.Br(),
             html.H2("Contexto del problema"),
             html.P(
-                "La salud mental estudiantil es un tema prioritario a nivel mundial. Factores como la presión académica, la carga de trabajo, el estrés financiero y el aislamiento social influyen en el bienestar emocional de los estudiantes. Este conjunto de datos recoge respuestas de estudiantes universitarios sobre síntomas de depresión, ansiedad y ataques de pánico, junto con información académica y personal."
+                "La salud mental estudiantil es un tema prioritario a nivel mundial. Factores como la presión académica, la carga de trabajo, el estrés financiero y el aislamiento social influyen 
+                en el bienestar emocional de los estudiantes. Este conjunto de datos recoge respuestas de estudiantes universitarios sobre síntomas de depresión, ansiedad y ataques de pánico, 
+                junto con información académica y personal."
             ),
             html.P(
                 "El objetivo de esta historia con datos es entender qué factores se asocian con la presencia de estos síntomas y si los estudiantes buscan ayuda profesional."
@@ -712,6 +714,7 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
