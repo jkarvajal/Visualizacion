@@ -575,14 +575,16 @@ app.layout = html.Div([
             ])
         ]),
 
+        html.P(
+                "Se puede concluir que todos los estudiantes encuestados tenían o tuvieron algún tipo de trastornos mental, ya sea ansiedad, depresión o ataques de pánico, la distribución entre cada uno es muy similar, prima la depresión con un total del 34.3%, sin embargo, la diferencia entre cada una no es significativa."
+            ),
+
         # ---------------- Pestaña 2: Factores académicos ----------------
         dcc.Tab(label="2. Factores académicos", children=[
             html.Br(),
             html.H2("Relación entre factores académicos y salud mental"),
             html.P(
-                "En esta sección exploramos cómo variables académicas como el programa, "
-                "el promedio de calificaciones (CGPA) y el año de estudio se asocian con "
-                "la presencia de síntomas de depresión y ansiedad."
+                "La siguiente variable por explorar es el programa académico en relación con los estudiantes que tienen depresión, se encuentran que priman con un 2.5 las carreras de tecnología de la información y ciencias computacionales, a continuación, se encuentran ingles, psicología y educación con un 2, y con una menor cantidad se encuentran las carreras restantes de los alumnos encuestados."
             ),
 
             html.H3("Depresión por programa académico"),
@@ -745,6 +747,7 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
