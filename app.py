@@ -574,11 +574,12 @@ app.layout = html.Div([
                 dcc.Graph(figure=fig_ans, style={"width": "32%", "display": "inline-block"}),
                 dcc.Graph(figure=fig_panic, style={"width": "32%", "display": "inline-block"}),
             ])
-        ]),
+        
 
         html.P(
                 "Se puede concluir que todos los estudiantes encuestados tenían o tuvieron algún tipo de trastornos mental, ya sea ansiedad, depresión o ataques de pánico, la distribución entre cada uno es muy similar, prima la depresión con un total del 34.3%, sin embargo, la diferencia entre cada una no es significativa."
             ),
+            ]),
 
         # ---------------- Pestaña 2: Factores académicos ----------------
         dcc.Tab(label="2. Factores académicos", children=[
@@ -748,6 +749,7 @@ app.layout = html.Div([
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
