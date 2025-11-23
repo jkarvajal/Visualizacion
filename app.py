@@ -377,7 +377,6 @@ fig_anio_symptoms = px.bar(
     title="Proporción de ansiedad y depresión por año de estudio"
 )
 
-
 # %%
 # -------------------------------
 # 2.3 FACTORES PERSONALES
@@ -395,7 +394,6 @@ fig_genero_panic = px.bar(
 )
 
 
-
 # %%
 # 2.3.2 Estado civil vs Ansiedad
 ans_por_estado = df.groupby("estado_civil")["tiene_ansiedad"].mean().reset_index()
@@ -408,8 +406,6 @@ fig_estado_ans = px.bar(
     title="Proporción de estudiantes con ansiedad por estado civil"
 )
 fig_estado_ans
-
-
 
 # %%
 # 2.3.3 Correlaciones (Edad y síntomas)
@@ -457,7 +453,6 @@ fig_corr.update_yaxes(tickangle=0)
 
 # Mostrar la figura
 
-
 # %%
 # -------------------------------
 # 2.4 Acceso a ayuda profesional
@@ -488,9 +483,6 @@ fig_help_symptoms = px.bar(
 )
 fig_help_symptoms.update_yaxes(tickformat=".0%")
 
-
-
-
 # %%
 # -------------------------------
 # 2.5 INSIGHT PRINCIPAL (Clímax)
@@ -500,7 +492,6 @@ fig_help_symptoms.update_yaxes(tickformat=".0%")
 fig_insight = fig_help_symptoms.update_layout(
     title="Brecha entre padecer síntomas y buscar ayuda profesional"
 )
-
 
 # %% [markdown]
 # # Bloque 3 – Layout de la app Dash con tabs narrativos
@@ -523,7 +514,7 @@ app.layout = html.Div([
 
     dcc.Tabs([
 
-        # ---------------- Pestaña 1: Contexto ----------------
+# ---------------- Pestaña 1: Contexto ----------------
 dcc.Tab(label="1. Contexto", children=[
     html.Br(),
     html.H2("Contexto del problema"),
@@ -585,9 +576,7 @@ dcc.Tab(label="1. Contexto", children=[
         "diferencias no son estadísticamente significativas."
     ),
 ]),
-
-
-        # ---------------- Pestaña 2: Factores académicos ----------------
+# ---------------- Pestaña 2: Factores académicos ----------------
         
 dcc.Tab(label="2. Factores académicos", children=[
     html.Br(),
@@ -607,7 +596,6 @@ dcc.Tab(label="2. Factores académicos", children=[
 
     html.Br(),
 
-  
     html.P(
         "De igual forma, se toma la siguiente variable a considerar, la cual relaciona los estudiantes con "
         "depresión con el promedio de calificaciones. Podemos observar que el promedio acumulado de calificaciones, "
@@ -622,7 +610,6 @@ dcc.Tab(label="2. Factores académicos", children=[
     dcc.Graph(figure=fig_cgpa_dep),
 
     html.Br(),
-
     
     html.P(
         "Continuando con las relaciones de las variables de depresión, anexamos la variable de ansiedad en relación "
@@ -638,9 +625,7 @@ dcc.Tab(label="2. Factores académicos", children=[
     dcc.Graph(figure=fig_anio_symptoms),
 
     html.Br(),
-]),
-       
-        
+]), 
         # ---------------- Pestaña 3: Factores personales ----------------
 
 dcc.Tab(label="3. Factores personales", children=[
@@ -657,13 +642,11 @@ dcc.Tab(label="3. Factores personales", children=[
         "entre géneros en este aspecto."
     ),
 
-
     html.H3("Proporción de estudiantes con ataques de pánico por género"),
     dcc.Graph(figure=fig_genero_panic),
 
     html.Br(),
 ]),
-
         # ---------------- Pestaña 4: Acceso a ayuda profesional ----------------
 dcc.Tab(label="4. Acceso a ayuda profesional", children=[
     html.Br(),
@@ -685,7 +668,6 @@ dcc.Tab(label="4. Acceso a ayuda profesional", children=[
 
     html.Br(),
 ]),
-
         # ---------------- Pestaña 5: Insight principal ----------------
 dcc.Tab(label="5. Insight principal", children=[
     html.Br(),
@@ -701,16 +683,13 @@ dcc.Tab(label="5. Insight principal", children=[
         "donde valores cercanos a cero indican relaciones débiles y valores positivos o negativos más altos "
         "indican relaciones fuertes."
     ),
-
-  
+ 
     html.H3("Mapa de calor de correlaciones: edad, síntomas y búsqueda de tratamiento"),
     dcc.Graph(figure=fig_corr),
 
     html.Br(),
 
-
     html.H3("Análisis:"),
-
 
     html.P(
         "En primer lugar, la edad muestra correlaciones muy bajas con los síntomas de salud mental: "
@@ -736,7 +715,6 @@ dcc.Tab(label="5. Insight principal", children=[
 
     html.Br(),
 ]),
-
 
         # ---------------- Pestaña 6: Limitaciones ----------------
 dcc.Tab(label="6. Limitaciones del análisis", children=[
@@ -775,15 +753,11 @@ dcc.Tab(label="6. Limitaciones del análisis", children=[
 
     html.Br(),
 ]),
-
-
         # ---------------- Pestaña 7: Conclusiones y recomendaciones ----------------
 dcc.Tab(label="7. Conclusiones y recomendaciones", children=[
     html.Br(),
 
-   
     html.H2("Puntos de mejora y de recomendación", style={"fontWeight": "bold"}),
-
     html.P(
         "Con el fin de proceder a fortalecer el bienestar y salud mental estudiantil, se podría enfatizar en "
         "realizar acciones estratégicas y de mejora encaminadas a la detección temprana y el acompañamiento oportuno. "
@@ -800,9 +774,7 @@ dcc.Tab(label="7. Conclusiones y recomendaciones", children=[
         "un entorno universitario más saludable y preventivo."
     ),
     html.Br(),
-    
     html.H2("Conclusiones", style={"fontWeight": "bold"}),
-
     html.P(
         "El análisis realizado permite comprender que la salud mental de los estudiantes universitarios es un aspecto "
         "profundamente ligado a su experiencia académica y personal. Los resultados evidencian una presencia "
@@ -837,30 +809,9 @@ dcc.Tab(label="7. Conclusiones y recomendaciones", children=[
     # o simplemente:
     # app.run(debug=True)
 
-
-
 # =============================================================================
 # 8. EJECUCIÓN EN RENDER
 # =============================================================================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
