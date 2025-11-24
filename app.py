@@ -94,7 +94,7 @@ df["your_current_year_of_study"] = (
     .str.lower()
     .str.replace("year", "")
     .str.strip()
-    .replace({"1": "Year 1", "2": "Year 2", "3": "Year 3", "4": "Year 4"})
+    .replace({"1": "Año 1", "2": "Año 2", "3": "Año 3", "4": "Año 4"})
 )
 
 # 5.3 CGPA
@@ -815,3 +815,4 @@ dcc.Tab(label="7. Conclusiones y recomendaciones", children=[
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
