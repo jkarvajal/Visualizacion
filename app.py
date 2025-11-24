@@ -753,9 +753,6 @@ dcc.Tab(label="6. Limitaciones del análisis", children=[
             "clínicos, consumo de sustancias, redes de apoyo familiar y social, o carga académica real."
         ),
         html.Li(
-            "Las relaciones observadas son correlaciones y no permiten inferir causalidad entre las variables analizadas."
-        ),
-        html.Li(
             "El uso de preguntas dicotómicas simplifica condiciones que, en la práctica, requieren evaluación "
             "y diagnóstico clínico, lo cual puede limitar la profundidad e interpretación de los resultados."
         ),
@@ -825,6 +822,7 @@ dcc.Tab(label="7. Conclusiones y recomendaciones", children=[
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
