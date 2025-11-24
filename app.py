@@ -373,8 +373,13 @@ fig_anio_symptoms = px.bar(
     x="año_estudio",
     y=["tiene_ansiedad", "tiene_depresion"],
     barmode="group",
-    labels={"value": "Proporción de estudiantes", "año_estudio": "Año de estudio", "variable": "Síntoma"},
-    title="Proporción de ansiedad y depresión por año de estudio"
+    labels={
+        "value": "Proporción de estudiantes",
+        "año_estudio": "Año de estudio",
+        "variable": "Síntoma"
+    },
+    title="Proporción de ansiedad y depresión por año de estudio",
+    text="value"   # <<< AGREGADO para mostrar etiquetas
 )
 
 # %%
@@ -815,4 +820,5 @@ dcc.Tab(label="7. Conclusiones y recomendaciones", children=[
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
